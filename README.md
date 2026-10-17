@@ -442,8 +442,3 @@ Three equirectangular panorama images projected onto Unity's `Skybox/Panoramic` 
 
 ---
 
-## 8. Safety & Disclaimer
-
-> **⚠️ ACADEMIC PROTOTYPE — NOT A MEDICAL DEVICE**
->
-> This is a B.Tech Final Year Project. The model was trained on **synthetic data only**. It has NOT been clinically validated and must NOT replace medical judgment.
