@@ -6,7 +6,6 @@
 > **Course:** Final Year B.Tech in Artificial Intelligence and Data Science  
 > **Phase:** Phase 1 — **COMPLETED**  
 > **Unity Version:** Unity 6 (`6000.6.6f1`)  
-> **Platform:** Windows 10 / 11 (100% Free & Local — Zero Cloud, Zero Paid APIs)
 
 ---
 
