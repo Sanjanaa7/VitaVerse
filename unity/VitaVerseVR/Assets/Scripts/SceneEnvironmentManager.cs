@@ -256,25 +256,65 @@ namespace VitaVerse
         private IEnumerator DownloadAndPlayMemoryAudio(string audioUrl)
         {
             Debug.Log($"[SceneEnvironmentManager] Streaming Memory Audio Therapy from: {audioUrl}");
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(audioUrl, AudioType.MPEG))
+
+            // 1. Try instantaneous load from mirrored Resources/Audio/MemoryAudio
+            try
             {
-                www.timeout = 10;
-                yield return www.SendWebRequest();
-                if (www.result == UnityWebRequest.Result.Success)
+                string filename = System.IO.Path.GetFileNameWithoutExtension(audioUrl);
+                if (!string.IsNullOrEmpty(filename))
                 {
-                    AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                    if (clip != null && audioManager != null)
+                    AudioClip localClip = Resources.Load<AudioClip>("Audio/MemoryAudio/" + filename);
+                    if (localClip != null && audioManager != null)
                     {
-                        clip.name = "MemoryAudioTherapy";
-                        audioManager.SetMemoryAudio(clip, true);
-                        Debug.Log("[SceneEnvironmentManager] Memory Audio Therapy playing in VR headset.");
+                        localClip.name = "MemoryAudioTherapy";
+                        audioManager.SetMemoryAudio(localClip, true);
+                        Debug.Log("[SceneEnvironmentManager] Memory Audio loaded from Resources.");
+                        yield break;
                     }
                 }
-                else
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[SceneEnvironmentManager] Resources audio load check: {ex.Message}");
+            }
+
+            // 2. HTTP Web Request via UnityWebRequestMultimedia (safely resolved via reflection for universal compatibility)
+            Type multimediaType = Type.GetType("UnityEngine.Networking.UnityWebRequestMultimedia, UnityEngine.UnityWebRequestAudioModule")
+                               ?? Type.GetType("UnityEngine.Networking.UnityWebRequestMultimedia, UnityEngine");
+            Type downloadHandlerAudioType = Type.GetType("UnityEngine.Networking.DownloadHandlerAudioClip, UnityEngine.UnityWebRequestAudioModule")
+                                         ?? Type.GetType("UnityEngine.Networking.DownloadHandlerAudioClip, UnityEngine");
+
+            if (multimediaType != null && downloadHandlerAudioType != null)
+            {
+                var getAudioMethod = multimediaType.GetMethod("GetAudioClip", new Type[] { typeof(string), typeof(AudioType) });
+                var getContentMethod = downloadHandlerAudioType.GetMethod("GetContent", new Type[] { typeof(UnityWebRequest) });
+
+                if (getAudioMethod != null && getContentMethod != null)
                 {
-                    Debug.LogWarning($"[SceneEnvironmentManager] Failed to stream memory audio: {www.error}");
+                    using (UnityWebRequest www = (UnityWebRequest)getAudioMethod.Invoke(null, new object[] { audioUrl, AudioType.MPEG }))
+                    {
+                        www.timeout = 10;
+                        yield return www.SendWebRequest();
+                        if (www.result == UnityWebRequest.Result.Success)
+                        {
+                            AudioClip clip = (AudioClip)getContentMethod.Invoke(null, new object[] { www });
+                            if (clip != null && audioManager != null)
+                            {
+                                clip.name = "MemoryAudioTherapy";
+                                audioManager.SetMemoryAudio(clip, true);
+                                Debug.Log("[SceneEnvironmentManager] Memory Audio Therapy streaming into VR headset.");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"[SceneEnvironmentManager] Failed to stream memory audio: {www.error}");
+                        }
+                    }
+                    yield break;
                 }
             }
+
+            Debug.LogWarning("[SceneEnvironmentManager] UnityWebRequestMultimedia is not available in current Unity build configuration.");
         }
 
         // ── Custom uploaded 360° photo handler ──────────────────────────
