@@ -1,0 +1,101 @@
+{
+  "model_name": "VitaVerse Comfort Classifier (Phase 1)",
+  "model_type": "RandomForestClassifier",
+  "training_timestamp": "2026-10-16T18:43:22.505448",
+  "features": [
+    "spo2",
+    "hr",
+    "hrv"
+  ],
+  "classes": [
+    "adjust",
+    "calm",
+    "support"
+  ],
+  "class_to_scene_map": {
+    "calm": "Garden",
+    "adjust": "Forest",
+    "support": "LowStimulation"
+  },
+  "feature_importances": {
+    "spo2": 0.2997,
+    "hr": 0.3181,
+    "hrv": 0.3822
+  },
+  "metrics": {
+    "accuracy": 0.9729,
+    "weighted_precision": 0.9731,
+    "weighted_recall": 0.9729,
+    "weighted_f1": 0.9729,
+    "confusion_matrix": [
+      [
+        152,
+        0,
+        8
+      ],
+      [
+        1,
+        159,
+        0
+      ],
+      [
+        4,
+        0,
+        156
+      ]
+    ],
+    "detailed_report": {
+      "adjust": {
+        "precision": 0.9681528662420382,
+        "recall": 0.95,
+        "f1-score": 0.9589905362776026,
+        "support": 160.0
+      },
+      "calm": {
+        "precision": 1.0,
+        "recall": 0.99375,
+        "f1-score": 0.9968652037617555,
+        "support": 160.0
+      },
+      "support": {
+        "precision": 0.9512195121951219,
+        "recall": 0.975,
+        "f1-score": 0.9629629629629629,
+        "support": 160.0
+      },
+      "accuracy": 0.9729166666666667,
+      "macro avg": {
+        "precision": 0.97312412614572,
+        "recall": 0.9729166666666668,
+        "f1-score": 0.9729395676674403,
+        "support": 480.0
+      },
+      "weighted avg": {
+        "precision": 0.9731241261457201,
+        "recall": 0.9729166666666667,
+        "f1-score": 0.9729395676674404,
+        "support": 480.0
+      }
+    }
+  },
+  "parameter_bounds": {
+    "spo2": {
+      "min": 70.0,
+      "max": 100.0,
+      "unit": "%"
+    },
+    "hr": {
+      "min": 40.0,
+      "max": 180.0,
+      "unit": "bpm"
+    },
+    "hrv": {
+      "min": 5.0,
+      "max": 200.0,
+      "unit": "ms"
+    }
+  },
+  "training_samples": 1920,
+  "test_samples": 480,
+  "disclaimer": "EXPERIMENTAL PROTOTYPE NOTICE: This machine learning model was trained strictly on synthetic, artificially generated demonstration data for academic engineering purposes. It has NOT been validated with real patient clinical trials and does NOT measure true subjective patient comfort, nor does it diagnose distress or medical emergency. Do not use for medical decision-making."
+}
